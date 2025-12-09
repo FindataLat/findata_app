@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FINDATA - Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../static/css/css_user/user.css">
+    <link rel="icon" href="../../static/img/logo.webp" type="image/png">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <img src="/static/img/logo.webp" alt="FINDATA" class="brand-logo">
+                    <span class="brand-name">FINDATA</span>
+                </div>
+
+                <div class="user-profile">
+                    <div class="user-avatar"><i class="bi bi-currency-dollar"></i></div>
+                    <div class="user-name">{{data_user.user_name}}</div>
+                    <div class="user-email">{{data_user.user_mail}}</div>
+                    <span class="user-plan">Plan Basico</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-title">Principal</div>
+                    <a href="#" class="nav-item active">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="bi bi-briefcase"></i>
+                        <span>Mi Portafolio</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <span>Inversiones</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Historial</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-title">Análisis</div>
+                    <a href="#" class="nav-item">
+                        <i class="bi bi-bar-chart-line"></i>
+                        <span>Rendimiento</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="bi bi-pie-chart"></i>
+                        <span>Diversificación</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="bi bi-robot"></i>
+                        <span>Recomendaciones IA</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-title">Cuenta</div>
+                    <a href="#" class="nav-item">
+                        <i class="bi bi-person"></i>
+                        <span>Mi Perfil</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="bi bi-gear"></i>
+                        <span>Configuración</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="bi bi-question-circle"></i>
+                        <span>Ayuda</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="{{url_for('auth.logout')}}">
+                    <button class="btn-logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Logo Background -->
+            <div class="logo-background">
+                <img src="/static/img/logo.webp" alt="FINDATA">
+            </div>
+
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <h1 class="page-title">Bienvenido, {{data_user.user_name}} </h1>
+                    <p class="page-subtitle">Aquí está el resumen de tus inversiones</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Portafolio Total</span>
+                            <div class="stat-icon">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ data_user_module.portafolio_total if data_user_module.portafolio_total else '---' }}</div>
+                        <div class="stat-change">
+                            <i class="bi bi-arrow-up"></i>
+                            {{ data_user_module.cambio_mes if data_user_module.cambio_mes else '---' }}
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Rendimiento</span>
+                            <div class="stat-icon">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ data_user_module.rendimiento if data_user_module.rendimiento else '---' }}</div>
+                        <div class="stat-change">
+                            <i class="bi bi-arrow-up"></i>
+                            {{ data_user_module.cambio_rendimiento if data_user_module.cambio_rendimiento else '---' }}
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Inversiones Activas</span>
+                            <div class="stat-icon">
+                                <i class="bi bi-briefcase"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ data_user_module.inversiones_activas if data_user_module.inversiones_activas else '---' }}</div>
+                        <div class="stat-change">
+                            <i class="bi bi-arrow-up"></i>
+                            {{ data_user_module.nuevas_inversiones if data_user_module.nuevas_inversiones else '---' }}
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Dividendos</span>
+                            <div class="stat-icon">
+                                <i class="bi bi-cash-coin"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">{{ data_user_module.dividendos if data_user_module.dividendos else '---' }}</div>
+                        <div class="stat-change">
+                            <i class="bi bi-arrow-up"></i>
+                            {{ data_user_module.proximo_dividendo if data_user_module.proximo_dividendo else '---' }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Section -->
+                <div class="content-section">
+                    <h2 class="section-title">
+                        <i class="bi bi-briefcase"></i> Tu Portafolio
+                    </h2>
+                    <div class="empty-state">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <h3>Construye tu portafolio</h3>
+                        <p>Comienza a invertir y observa el crecimiento de tu patrimonio aquí</p>
+                    </div>
+                </div>
+
+                <!-- Recommendations Section -->
+                <div class="content-section">
+                    <h2 class="section-title">
+                        <i class="bi bi-robot"></i> Recomendaciones de IA
+                    </h2>
+                    <div class="empty-state">
+                        <i class="bi bi-lightbulb"></i>
+                        <h3>Recomendaciones personalizadas</h3>
+                        <p>Nuestra IA analizará tus inversiones y te sugerirá las mejores oportunidades</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+    <!-- Modal "Próximamente" -->
+    <div class="modal-overlay" id="comingSoonModal">
+        <div class="modal-content modal-success-theme">
+            <div class="modal-icon">
+                <i class="bi bi-rocket-takeoff"></i>
+            </div>
+            <div class="modal-body">
+                <h3>¡Próximamente!</h3>
+                <p>Estamos trabajando arduamente para impulsar tu crecimiento financiero. Esta función estará disponible muy pronto. ¡Mantente atento a las actualizaciones!</p>
+            </div>
+            <button class="modal-btn" onclick="closeComingSoonModal()">
+                Entendido
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Función para abrir el modal de "Próximamente"
+        function openComingSoonModal() {
+            document.getElementById('comingSoonModal').style.display = 'flex';
+        }
+
+        // Función para cerrar el modal
+        function closeComingSoonModal() {
+            document.getElementById('comingSoonModal').style.display = 'none';
+        }
+
+        // Agregar evento a todos los nav-items excepto Dashboard y Cerrar Sesión
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach((item, index) => {
+                // Excluir el primer item (Dashboard que tiene clase active)
+                // y los botones de logout
+                if (!item.classList.contains('active') && 
+                    !item.closest('.sidebar-footer')) {
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        openComingSoonModal();
+                    });
+                }
+            });
+        });
+
+        // Cerrar con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeComingSoonModal();
+            }
+        });
+
+        // Cerrar al hacer click fuera del modal
+        document.getElementById('comingSoonModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeComingSoonModal();
+            }
+        });
+
+        // Mantener la función toggleSidebar existente
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (window.innerWidth <= 1024 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+
+
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (window.innerWidth <= 1024 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

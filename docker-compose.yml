@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  findata_app:
+    container_name: findata_app
+    build: 
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "443:443"
+    depends_on:
+      - db_findata
+    environment:
+      - TZ=America/Bogota
+    volumes:
+      - .:/home/app
+
+  db_findata:
+    image: postgres:16.9-bookworm
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=findata_app_db
+      - POSTGRES_USER=adminfindata
+      - POSTGRES_PASSWORD=123456789
+      - TZ=America/Bogota
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

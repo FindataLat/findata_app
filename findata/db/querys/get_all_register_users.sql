@@ -1,0 +1,1 @@
+select * from finpartnerts limit 2000;

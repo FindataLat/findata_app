@@ -1,0 +1,203 @@
+==========================================
+        CONFIGURAR NGIX DESPLIEGUE
+==========================================
+
+# Instalar Nginx y Certbot
+sudo apt update && sudo apt install -y nginx certbot python3-certbot-nginx
+
+# Crear configuración temporal de Nginx
+sudo tee /etc/nginx/sites-available/findata.lat > /dev/null <<'EOF'
+server {
+    listen 80;
+    listen [::]:80;
+    server_name findata.lat www.findata.lat;
+    
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+    
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+EOF
+
+# Habilitar el sitio
+sudo ln -sf /etc/nginx/sites-available/findata.lat /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Verificar y reiniciar Nginx
+sudo nginx -t && sudo systemctl restart nginx
+
+# Obtener certificado SSL - CAMBIA EL EMAIL
+sudo certbot --nginx -d findata.lat -d www.findata.lat --email tu-email@ejemplo.com --agree-tos --non-interactive
+
+# Crear configuración final con SSL
+sudo tee /etc/nginx/sites-available/findata.lat > /dev/null <<'EOF'
+server {
+    listen 80;
+    listen [::]:80;
+    server_name findata.lat www.findata.lat;
+    
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+    
+    location / {
+        return 301 https://$server_name$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name findata.lat www.findata.lat;
+    
+    ssl_certificate /etc/letsencrypt/live/findata.lat/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/findata.lat/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+    
+    client_max_body_size 50M;
+    
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+EOF
+
+# Recargar Nginx
+sudo nginx -t && sudo systemctl reload nginx
+
+# Verificar renovación automática
+sudo certbot renew --dry-run
+
+echo "✅ COMPLETADO - Visita https://findata.lat"
+
+
+==========================================
+           EJECUTAR APP ENTORNO DEV
+==========================================
+
+EJECUTAR APP: docker-compose up --build
+
+VER LOGS: docker-compose logs -f
+
+DESACTIVAR APP: docker-compose down 
+
+DESMOTAR VOLUMENES( no usar esto si ya se esta corriedo la db del mvp con regitros reales): docker-compose down -v
+
+
+
+==========================================
+           EJECUTAR APP ENTORNO PROD
+==========================================
+
+EJECUTAR APP: sudo docker-compose -f docker-compose.prod.yml up -d --build
+
+VER LOGS: sudo docker-compose -f docker-compose.prod.yml logs -f
+
+VER LOGS DE UN SERVICIO ESPECÍFICO: sudo docker-compose -f docker-compose.prod.yml logs -f findata_app_prod
+
+DETENER APP: sudo docker-compose -f docker-compose.prod.yml down
+
+REINICIAR APP: sudo docker-compose -f docker-compose.prod.yml restart
+
+RECONSTRUIR IMAGEN (después de cambios en código): sudo docker-compose -f docker-compose.prod.yml up -d --build --force-recreate
+
+VER ESTADO DE CONTENEDORES: sudo docker-compose -f docker-compose.prod.yml ps
+
+EJECUTAR COMANDO DENTRO DEL CONTENEDOR: sudo docker-compose -f docker-compose.prod.yml exec findata_app_prod bash
+
+LIMPIAR RECURSOS NO UTILIZADOS: sudo docker system prune -a
+
+==========================================
+NOTA: El flag -d ejecuta en modo detached (background)
+==========================================
+
+
+==========================================
+  EJECUTAR ESTO CUNDO ESTE MONTADA LA DB
+==========================================
+APENAS SE DESPLIEGUE EJECUTAR ESTO 
+
+INSERT INTO entity (name_rol)
+VALUES 
+    ('Admin'),    -- para Finadmin
+    ('Partner')   -- para Finpartnerts (Socio)
+RETURNING id, name_rol;
+
+
+
+
+
+==========================================
+    FLUJO DE ACTUALIZACIÓN - FINDATA PROD
+==========================================
+
+# 1️⃣ NAVEGAR AL DIRECTORIO DEL PROYECTO
+cd findata_app
+
+# 2️⃣ DETENER LA APLICACIÓN (libera recursos)
+sudo docker-compose -f docker-compose.prod.yml down
+
+# 3️⃣ HACER PULL DE LOS CAMBIOS DESDE GIT
+git pull origin main
+# O si usas otra rama: git pull origin nombre-de-tu-rama
+
+# 4️⃣ RECONSTRUIR Y LEVANTAR LA APLICACIÓN
+sudo docker-compose -f docker-compose.prod.yml up -d --build
+
+# 5️⃣ VERIFICAR QUE EL CONTENEDOR ESTÁ CORRIENDO
+sudo docker-compose -f docker-compose.prod.yml ps
+
+# 6️⃣ VER LOGS DE LA APLICACIÓN (verificar que inició correctamente)
+sudo docker-compose -f docker-compose.prod.yml logs -f findata_app_prod
+# Presiona Ctrl+C para salir de los logs
+
+# 7️⃣ REINICIAR NGINX (por si acaso)
+sudo systemctl restart nginx
+
+# 8️⃣ VERIFICAR ESTADO DE NGINX
+sudo systemctl status nginx
+
+# 9️⃣ TEST DE CONEXIÓN CON CURL
+curl -I https://findata.lat
+# Deberías ver: HTTP/2 200
+
+# 🔟 TEST COMPLETO (opcional - ver respuesta HTML)
+curl -k https://findata.lat
+
+==========================================
+    VERIFICACIONES ADICIONALES
+==========================================
+
+# Ver logs en tiempo real de Nginx
+sudo tail -f /var/log/nginx/error.log
+
+# Ver logs en tiempo real de tu app
+sudo docker-compose -f docker-compose.prod.yml logs -f
+
+# Verificar puertos en uso
+sudo netstat -tlnp | grep -E ':(80|443|8080)'
+
+# Inspeccionar el contenedor
+sudo docker inspect findata_app_prod
+
+==========================================

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FINDATA - Construye tu patrimonio</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../static/css/css_auth/index.css">
+    <link rel="icon" href="../static/img/logo.webp" type="image/png">
+
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="/static/img/logo.webp" alt="FINDATA Logo" class="logo-img">
+            </div>
+            <ul class="nav-links">
+                <li><a href="#about">Sobre FINDATA</a></li>
+                <li><a href="#solutions">Soluciones</a></li>
+                <li><a href="#register">Productos</a></li>
+            </ul>
+            <a href="{{ url_for('auth.login') }}" class="btn-register">Ingresar</a>
+        </nav>
+    </header>
+
+    <section class="hero-slider">
+        <img src="/static/img/slider.webp" alt="SLIDER" class="slider-bg">
+        <div class="hero-content">
+            <img src="/static/img/logo.webp" alt="FINDATA Logo" class="hero-logo">
+            <h1 class="hero-title">Construye tu patrimonio y diversifica tus inversiones</h1>
+            <p class="hero-subtitle">
+                Creamos portafolios de inversión a través de inteligencia artificial, para encontrar las mejores oportunidades, minimizar el riesgo y maximizar el retorno.
+            </p>
+        </div>
+    </section>
+
+    <section class="invest-stocks">
+        <h2>Acciones en las que puedes invertir</h2>
+        <div class="stocks-slider">
+            <div class="stocks-track">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/320px-Amazon_logo.svg.png" alt="Amazon" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/320px-Google_2015_logo.svg.png" alt="Alphabet/Google" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/320px-Apple_logo_black.svg.png" alt="Apple" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/320px-Microsoft_logo.svg.png" alt="Microsoft" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IBM_logo.svg/320px-IBM_logo.svg.png" alt="IBM" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Nubank_logo_2021.svg/320px-Nubank_logo_2021.svg.png" alt="Nubank" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/McDonald%27s_Golden_Arches.svg/320px-McDonald%27s_Golden_Arches.svg.png" alt="McDonald's" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Logo_NIKE.svg/320px-Logo_NIKE.svg.png" alt="Nike" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/MasterCard_Logo.svg/320px-MasterCard_Logo.svg.png" alt="Mastercard" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Samsung_Logo.svg/320px-Samsung_Logo.svg.png" alt="Samsung" class="stock-logo">
+                <!-- Duplicado para efecto continuo -->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/320px-Amazon_logo.svg.png" alt="Amazon" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/320px-Google_2015_logo.svg.png" alt="Alphabet/Google" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/320px-Apple_logo_black.svg.png" alt="Apple" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/320px-Microsoft_logo.svg.png" alt="Microsoft" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IBM_logo.svg/320px-IBM_logo.svg.png" alt="IBM" class="stock-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Nubank_logo_2021.svg/320px-Nubank_logo_2021.svg.png" alt="Nubank" class="stock-logo">
+            </div>
+        </div>
+    </section>
+
+    <section id="register" class="register-section">
+        <div class="register-container">
+            <h2 class="register-title">Comienza tu viaje financiero</h2>
+            <p class="register-subtitle">Regístrate y da el primer paso hacia la construcción de tu patrimonio</p>
+            <form class="register-form" method="POST">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Tus Nombres" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido">Apellido</label>
+                        <input type="text" id="apellido" name="apellido" placeholder="Tus Apellidos" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edad">Edad</label>
+                        <input type="number" id="edad" name="edad" placeholder="Tu Edad" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ocupacion">Ocupación</label>
+                        <input type="text" id="ocupacion" name="ocupacion" placeholder="Tu Ocupación" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pais">País</label>
+                        <select id="pais" name="pais" required>
+                            <option value="">Selecciona tu país</option>
+                            <option value="argentina">Argentina</option>
+                            <option value="bolivia">Bolivia</option>
+                            <option value="brasil">Brasil</option>
+                            <option value="chile">Chile</option>
+                            <option value="colombia">Colombia</option>
+                            <option value="costa-rica">Costa Rica</option>
+                            <option value="ecuador">Ecuador</option>
+                            <option value="el-salvador">El Salvador</option>
+                            <option value="españa">España</option>
+                            <option value="estados-unidos">Estados Unidos</option>
+                            <option value="guatemala">Guatemala</option>
+                            <option value="honduras">Honduras</option>
+                            <option value="mexico">México</option>
+                            <option value="nicaragua">Nicaragua</option>
+                            <option value="panama">Panamá</option>
+                            <option value="paraguay">Paraguay</option>
+                            <option value="peru">Perú</option>
+                            <option value="portugal">Portugal</option>
+                            <option value="republica-dominicana">República Dominicana</option>
+                            <option value="uruguay">Uruguay</option>
+                            <option value="venezuela">Venezuela</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="tel" id="telefono" name="telefono" placeholder="Tu Teléfono" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="correo">Correo electrónico</label>
+                        <input type="email" id="correo" name="correo" placeholder="tu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <div style="position: relative;">
+                            <input type="password" id="password" name="password" placeholder="••••••••" minlength="7" required 
+                                style="width: 100%; padding-right: 40px;">
+                            <button type="button" 
+                                    onclick="togglePassword()" 
+                                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); 
+                                        background: none; border: none; cursor: pointer;"
+                                    id="toggleBtn">
+                                <i style="color: white;" class="bi bi-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                        <small style="color: #666; font-size: 12px;">Mínimo 7 caracteres</small>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">Registrarse</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="about" class="about-section">
+        <div class="about-container">
+            <h2 class="about-title">¿Qué es FINDATA?</h2>
+            
+            <div class="video-container">
+                <div class="video-wrapper" id="videoWrapper">
+                    <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="Video FINDATA" class="video-thumbnail" id="videoThumbnail">
+                    <div class="video-overlay">
+                        <p class="video-text">Descubre cómo transformamos tu futuro financiero</p>
+                        <button class="play-button" onclick="playVideo()">
+                            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="40" cy="40" r="40" fill="rgba(16, 185, 129, 0.95)"/>
+                                <path d="M32 25L55 40L32 55V25Z" fill="white"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cta-buttons">
+                <a href="#register" class="btn-cta-primary">
+                    Comenzar Ahora <i class="bi bi-check-circle"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="solutions" class="solutions-section">
+        <div class="solutions-container">
+            <h2 class="solutions-title">Nuestras Soluciones</h2>
+            <p class="solutions-subtitle">Servicios diseñados para cada etapa de tu viaje financiero</p>
+            <div class="solutions-grid">
+                <div class="solution-card">
+                    <h3>
+                        <i class="bi bi-briefcase"></i>
+                        Creación de Portafolio Diversificado
+                    </h3>
+                    <p>Construimos portafolios únicos con énfasis en tus objetivos financieros específicos. Incluye acompañamiento constante, selección de activos con IA, educación financiera y revisiones periódicas cada 3-6 meses.</p>
+                    <a href="#register" class="btn-solution">Saber más</a>
+                </div>
+                <div class="solution-card">
+                    <h3>
+                        <i class="bi bi-graph-up-arrow"></i>
+                        Servicios B2B
+                    </h3>
+                    <p>Diversifica el flujo de caja de tu empresa, adquiere activos y fortalece tu compañía para evitar riesgos financieros en el futuro. Incluye acceso a nuestra red exclusiva de contactos e inversores.</p>
+                    <a href="#register" class="btn-solution">Saber más</a>
+                </div>
+                <div class="solution-card">
+                    <h3>
+                        <i class="bi bi-shield-check"></i>
+                        Seguridad del Founder
+                    </h3>
+                    <p>Programa educativo y práctico para fundadores y directores de empresas emergentes. Construye seguridad financiera personal mientras desarrollas tu compañía.</p>
+                    <a href="#register" class="btn-solution">Saber más</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>FINDATA</h4>
+                <p>Construyendo patrimonios con inteligencia artificial desde 2024.</p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/company/findata" target="_blank" title="LinkedIn">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                    <a href="https://www.instagram.com/findata" target="_blank" title="Instagram">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    <a href="https://wa.me/573163812674" target="_blank" title="WhatsApp">
+                        <i class="bi bi-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Contacto</h4>
+                <a href="tel:+573163812674"><i class="bi bi-telephone-fill"></i> +57 316 381 2674</a>
+                <a href="mailto:info@findata.com"><i class="bi bi-envelope-fill"></i> info@findata.com</a>
+            </div>
+            <div class="footer-section">
+                <h4>Enlaces</h4>
+                <a href="#about">Sobre nosotros</a>
+                <a href="#solutions">Soluciones</a>
+                <a href="#register">Registro</a>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <a href="#">Términos y condiciones</a>
+                <a href="#">Política de privacidad</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 FINDATA. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.className = 'bi bi-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.className = 'bi bi-eye';
+            }
+        }
+    </script>   
+    
+    
+        
+
+    <!-- Modal para mensajes -->
+    {% if error or success %}
+    <div class="modal-overlay" id="messageModal">
+        <div class="modal-content {% if error %}modal-error-theme{% else %}modal-success-theme{% endif %}">
+            <div class="modal-icon">
+                <i class="bi {% if error %}bi-x-circle{% else %}bi-check-circle{% endif %}"></i>
+            </div>
+            <div class="modal-body">
+                <h3>{% if error %}Error en el registro{% else %}¡Registro exitoso!{% endif %}</h3>
+                <p>{{ error if error else success }}</p>
+            </div>
+            <button class="modal-btn" onclick="closeModal()">
+                {% if error %}Intentar nuevamente{% else %}Continuar{% endif %}
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar modal automáticamente
+        window.onload = function() {
+            const modal = document.getElementById('messageModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('messageModal').style.display = 'none';
+        }
+
+        // Cerrar con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Cerrar al hacer click fuera del modal
+        document.getElementById('messageModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+    {% endif %}
+
+
+
+
+</body>
+</html>

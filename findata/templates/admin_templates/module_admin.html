@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FINDATA - Gestión de Usuarios</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../../static/css/css_admin/admin.css">
+    <link rel="icon" href="../../static/img/logo.webp" type="image/png">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+    <!-- DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <img src="/static/img/logo.webp" alt="FINDATA" class="brand-logo">
+                    <span class="brand-name">FINDATA</span>
+                </div>
+
+                <div class="user-profile">
+                    <div class="user-avatar">AD</div>
+                    <div class="user-name">{{data_user.user_name}}</div>
+                    <div class="user-email">{{data_user.user_mail}}</div>
+                    <span class="user-plan">Administrador</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-title">Principal</div>
+                    <a href="#" class="nav-item active">
+                        <i class="bi bi-people"></i>
+                        <span>Usuarios</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="{{url_for('auth.logout')}}">
+                    <button class="btn-logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Logo Background -->
+            <div class="logo-background">
+                <img src="/static/img/logo.webp" alt="FINDATA">
+            </div>
+
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <div class="page-title-section">
+                        <h1 class="page-title">Gestión de Usuarios</h1>
+                        <p class="page-subtitle">Administra los usuarios registrados en la plataforma</p>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="users-table-container">
+                    <div class="table-wrapper">
+                        <table id="usersTable" class="display nowrap" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Usuario</th>
+                                    <th>Teléfono</th>
+                                    <th>País</th>
+                                    <th>Edad</th>
+                                    <th>Ocupación</th>
+                                    <th>Plan</th>
+                                    <th>Estado</th>
+                                    <th>Fecha Registro</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                {% if users_list %}
+                                    {% for user in users_list %}
+                                    <tr>
+                                        <td>{{ user.id }}</td>
+                                        <td>
+                                            <div class="user-info">
+                                                <div class="user-avatar-small">
+                                                    {{ user.name[0].upper() }}{{ user.lastname[0].upper() }}
+                                                </div>
+                                                <div class="user-details">
+                                                    <span class="user-details-name">{{ user.name }} {{ user.lastname }}</span>
+                                                    <span class="user-details-email">{{ user.mail }}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ user.phone }}</td>
+                                        <td>{{ user.contry }}</td>
+                                        <td>{{ user.age }}</td>
+                                        <td>{{ user.ocupation }}</td>
+                                        <td>
+                                            {% if user.rol == 1 %}
+                                                <span class="badge badge-pending">Básico</span>
+                                            {% elif user.rol == 2 %}
+                                                <span class="badge badge-active">Premium</span>
+                                            {% else %}
+                                                <span class="badge badge-pending">Básico</span>
+                                            {% endif %}
+                                        </td>
+                                        <td><span class="badge badge-active">Activo</span></td>
+                                        <td>{{ user.created_at.strftime('%d %b %Y') if user.created_at else 'N/A' }}</td>
+                                        <td>
+                                            <button class="btn-action" onclick="openEditModal('{{ user.name }}', '{{ user.lastname }}', '{{ user.mail }}', '{{ user.phone }}', '{{ user.contry }}', {{ user.age }}, '{{ user.ocupation }}', {{ user.rol }}, {{ user.id }})">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td style="text-align: center; padding: 40px; color: #9ca3af;">
+                                            <i class="bi bi-inbox" style="font-size: 3rem; display: block; margin-bottom: 10px; opacity: 0.5;"></i>
+                                            No hay usuarios registrados
+                                        </td>
+                                        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Editar Usuario -->
+    <div id="editModal" class="modal">
+        <div class="modal-content" style="max-width: 700px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Usuario</h2>
+                <button class="btn-close" onclick="closeEditModal()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <form method="post" onsubmit="saveUserChanges(event)">
+                <input type="hidden" id="editUserId">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="editUserName">Nombre</label>
+                        <input name="name" type="text" id="editUserName" placeholder="Nombre" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="editUserLastname">Apellido</label>
+                        <input name="lastname" type="text" id="editUserLastname" placeholder="Apellido" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editUserEmail">Correo Electrónico</label>
+                    <input name="mail" type="email" id="editUserEmail" placeholder="correo@ejemplo.com" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="editUserPhone">Teléfono</label>
+                        <input name="phone" type="text" id="editUserPhone" placeholder="Teléfono" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="editUserAge">Edad</label>
+                        <input name="age" type="number" id="editUserAge" placeholder="Edad" required min="18" max="120">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="editUserCountry">País</label>
+                        <input name="contry" type="text" id="editUserCountry" placeholder="País" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="editUserOcupation">Ocupación</label>
+                        <input name="job" type="text" id="editUserOcupation" placeholder="Ocupación" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="editUserPlan">Plan</label>
+                        <select id="editUserPlan">
+                            <option value="1">Básico</option>
+                            <option value="2">Premium</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="editUserStatus">Estado</label>
+                        <select id="editUserStatus">
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                            <option value="Pendiente">Pendiente</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid rgba(16, 185, 129, 0.2); padding-top: 20px; margin-top: 20px;">
+                    <h3 style="color: #10b981; font-size: 1.1rem; margin-bottom: 15px;">Cambiar Contraseña</h3>
+
+                    <div class="form-group">
+                        <label for="editConfirmPassword">Nueva Contraseña</label>
+                        <input required name="password" type="password" id="editConfirmPassword" placeholder="Confirmar contraseña">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <!-- Modal para mensajes -->
+    {% if error or success %}
+    <div class="modal-overlay" id="messageModal">
+        <div class="modal-content {% if error %}modal-error-theme{% else %}modal-success-theme{% endif %}">
+            <div class="modal-icon">
+                <i class="bi {% if error %}bi-x-circle{% else %}bi-check-circle{% endif %}"></i>
+            </div>
+            <div class="modal-body">
+                <h3>{% if error %}Error en el registro{% else %}¡Registro exitoso!{% endif %}</h3>
+                <p>{{ error if error else success }}</p>
+            </div>
+            <button class="modal-btn" onclick="closeModal()">
+                {% if error %}Intentar nuevamente{% else %}Continuar{% endif %}
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar modal automáticamente
+        window.onload = function() {
+            const modal = document.getElementById('messageModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('messageModal').style.display = 'none';
+        }
+
+        // Cerrar con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Cerrar al hacer click fuera del modal
+        document.getElementById('messageModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+    {% endif %}
+
+
+
+
+    <script src="../../static/js/js_admin/admin.js"></script>
+
+<script>
+        $(document).ready(function() {
+            const table = document.getElementById('usersTable');
+            const hasData = table.querySelector('tbody tr td[colspan]') === null;
+            
+            if (hasData) {
+                $('#usersTable').DataTable({
+                    responsive: {
+                        details: {
+                            type: 'column',
+                            target: 0
+                        }
+                    },
+                    paging: true,
+                    searching: true,
+                    info: true,
+                    lengthChange: true,
+                    scrollX: false,
+                    autoWidth: false,
+                    pageLength: 20,
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                    },
+                    dom: 'Bfrtip',
+                    buttons: [
+                        { 
+                            extend: 'excelHtml5', 
+                            text: '<i class="bi bi-file-earmark-excel"></i> Exportar a Excel', 
+                            className: 'dt-button-excel' 
+                        },
+                        { 
+                            extend: 'csvHtml5', 
+                            text: '<i class="bi bi-filetype-csv"></i> Exportar a CSV', 
+                            className: 'dt-button-csv' 
+                        },
+                        { 
+                            extend: 'pdfHtml5', 
+                            text: '<i class="bi bi-file-earmark-pdf"></i> Exportar a PDF', 
+                            className: 'dt-button-pdf' 
+                        }
+                    ],
+                    columnDefs: [
+                        { 
+                            className: 'dtr-control',
+                            orderable: false,
+                            targets: 0,
+                            width: '30px'
+                        },
+                        { responsivePriority: 1, targets: 1 },
+                        { responsivePriority: 2, targets: -1 },
+                        { orderable: false, targets: -1 }
+                    ],
+                    order: [[1, 'asc']]
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  findata_app:
+    container_name: findata_app_prod
+    build: 
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "8080:443"
+    env_file:
+      - .env
+    environment:
+      - TZ=America/Bogota  
+    restart: unless-stopped
